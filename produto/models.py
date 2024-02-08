@@ -44,7 +44,7 @@ class Produto (models.Model):
     
 class Variacao(models.Model):
     
-    class Meta:
+    class Meta: 
         verbose_name = 'Variação'
         verbose_name_plural = 'variações'
     nome  = models.CharField(max_length=100, blank=True, null=True)
@@ -56,8 +56,8 @@ class Variacao(models.Model):
     stoque = models.PositiveIntegerField(default=1)
     
     def __str__(self):
-        if self.name:
-            return self.name
+        if self.nome:
+            return self.nome
         
         return self.prduto
     
