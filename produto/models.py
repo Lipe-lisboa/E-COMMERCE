@@ -1,5 +1,6 @@
 from django.db import models
-from utils.validate import resize_image
+from utils.resize_image import resize_image
+from utils.create_slug import slugify_new
 
 # Create your models here.
 
@@ -23,19 +24,39 @@ class Produto (models.Model):
         default='V',
         max_length=1,
         choices=(
-            ('V', 'Variação'),
+            ('V', 'Variável'),
             ('S', 'Simples'),
         )
     )
     
+    def get_preco_formatado (self):
+        return f'R$ {self.preço_marketing:.2f}'.replace('.', ',')
+    get_preco_formatado.short_description = 'Preco'    
+        
+    def get_preco_promocional_formatado (self):
+        return f'R$ {self.preço_marketing_promocional:.2f}'.replace('.', ',')
+    get_preco_promocional_formatado.short_description = 'Preco promocional' 
+        
+        
     def save(self, *args, **kwargs):
-        super_save = super().save(*args, **kwargs)
         
+        if not self.slug:
+           self.slug =  slugify_new(self.name)
+           
+        img_atual = self.imagem.name
+        
+        super_save =  super().save(*args, **kwargs)
+        
+        img_changed = False
+        new_img = None
+
         if self.imagem:
-            resize_image(self.imagem)
-        
-        
-        
+            new_img = self.imagem
+            img_changed = bool(new_img != img_atual)
+            
+        if img_changed:
+            resize_image(self.imagem)        
+         
         return super_save
         
     
