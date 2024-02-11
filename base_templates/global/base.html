@@ -1,0 +1,12 @@
+
+{% include "global/partials/head.html" %}
+<body>
+    {% include "global/partials/nav.html" %}
+
+    <main class="container mt-4 mb-4">
+        {% block conteudo %}{% endblock conteudo %}
+    </main>
+
+    {% include "global/partials/footer.html" %}
+</body>
+

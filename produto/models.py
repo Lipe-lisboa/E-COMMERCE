@@ -1,6 +1,7 @@
 from django.db import models
 from utils.resize_image import resize_image
 from utils.create_slug import slugify_new
+from utils.format_preco import format_preco
 
 # Create your models here.
 
@@ -18,8 +19,8 @@ class Produto (models.Model):
     descricao_longa = models.TextField(max_length=255)
     imagem = models.ImageField(upload_to='imagem_produto/%Y/%m/', blank=True)
     
-    preço_marketing = models.FloatField(default=0)
-    preço_marketing_promocional = models.FloatField(default=0)
+    preco_marketing = models.FloatField(default=0)
+    preco_marketing_promocional = models.FloatField(default=0)
     tipo = models.CharField(
         default='V',
         max_length=1,
@@ -30,11 +31,11 @@ class Produto (models.Model):
     )
     
     def get_preco_formatado (self):
-        return f'R$ {self.preço_marketing:.2f}'.replace('.', ',')
+        return format_preco(self.preco_marketing)
     get_preco_formatado.short_description = 'Preco'    
         
     def get_preco_promocional_formatado (self):
-        return f'R$ {self.preço_marketing_promocional:.2f}'.replace('.', ',')
+        return format_preco(self.preco_marketing_promocional)
     get_preco_promocional_formatado.short_description = 'Preco promocional' 
         
         
