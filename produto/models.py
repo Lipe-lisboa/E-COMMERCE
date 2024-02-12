@@ -78,9 +78,11 @@ class Variacao(models.Model):
     stoque = models.PositiveIntegerField(default=1)
     
     def __str__(self):
-        if self.nome:
-            return self.nome
+            
         
-        return self.prduto
+        return self.nome or self.produto.name
+    
+    def save(self,*args, **kwargs):
+        return super().save(*args, **kwargs)
     
     
