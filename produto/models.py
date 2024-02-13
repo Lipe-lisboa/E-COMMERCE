@@ -75,11 +75,9 @@ class Variacao(models.Model):
     )
     preco = models.FloatField()
     preco_promocional = models.FloatField(default=0)
-    stoque = models.PositiveIntegerField(default=1)
+    estoque = models.PositiveIntegerField(default=1)
     
     def __str__(self):
-            
-        
         return self.nome or self.produto.name
     
     def save(self,*args, **kwargs):

@@ -1,0 +1,5 @@
+{% extends "global/base.html" %}
+
+{% block conteudo %}
+{{request.session.carrinho | safe}}
+{% endblock conteudo %}

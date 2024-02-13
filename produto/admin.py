@@ -5,7 +5,7 @@ from .models import Produto, Variacao
 
 @admin.register(Variacao)
 class VariacaoAdmin(admin.ModelAdmin):
-    list_display = 'id','nome', 'produto', 'stoque', 'preco', 'preco_promocional'
+    list_display = 'id','nome', 'produto', 'estoque', 'preco', 'preco_promocional'
     list_display_links = 'id','nome',
     ordering = '-id',
 
