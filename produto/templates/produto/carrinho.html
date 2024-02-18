@@ -1,5 +1,7 @@
 {% extends "global/base.html" %}
 {% load static %}
+{% load omfilters %}
+
 
 
 
@@ -73,7 +75,7 @@
                 <table class="table">
                     <tr>
                         <td class="font-weight-bold">Total</td>
-                        <td></td>
+                        <td>{{carrinho | preco_total | formata_preco}}</td>
                     </tr>
                 </table>
             </div>
