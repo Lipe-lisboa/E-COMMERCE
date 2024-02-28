@@ -1,6 +1,5 @@
 import re
-
-
+import string
 def valida_cpf(cpf):
     cpf = str(cpf)
     cpf = re.sub(r'[^0-9]', '', cpf)
@@ -41,13 +40,16 @@ def valida_cpf(cpf):
 
 
 def valida_cep(cep):
-    list_number = ['0','1','2', '3', '4', '5', '6', '7', '8', '9']
+    list_number=['0','1', '2', '3', '4', '5', '6', '7', '8', '9']
+    numbers = [i for i in str(string.digits)] 
+    list_digits_cep = [d for d in cep ]
     
-    for i in cep:
-        if i not in list_number:
+    if  len(cep) < 8:
+        print(len(cep), 'oi')
+        return False
+    
+    for d in list_digits_cep:
+        if d not in list_number:
             return False
-    
-    if len (cep) > 8 or len (cep) < 8 :
-         return False
-     
+        
     return True

@@ -9,29 +9,7 @@ class PerfilForm(forms.ModelForm):
          model = models.PerfilUsuario    
          fields = '__all__' #todos
          exclude = ('user',)
-         
-    def clean(self, *args, **kwargs):
-        data = self.data
-        cleaned_data = self.cleaned_data
-        cpf = cleaned_data.get('cpf')
-        cep = cleaned_data.get('cep')
         
-        if not valida_cep(cep):
-            self.add_error(
-                'cep',
-                ValidationError(
-                    'cep invalido, tente novamente.',
-                    code='invalid')
-                ) 
-        if not valida_cpf(cpf):
-            self.add_error(
-                'cpf',
-                ValidationError(
-                    'cpf invalido, tente novamente.',
-                    code='invalid')
-                ) 
-        
-        super().clean(*args, **kwargs)
 
 class UserForm(forms.ModelForm):
     

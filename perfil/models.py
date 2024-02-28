@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from utils.validate import valida_cpf, valida_cep
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 
@@ -60,6 +61,25 @@ class PerfilUsuario(models.Model):
             return self.user.first_name
 
         return self.user.username
+    
+    def clean(self, *args, **kwargs):
+        #cleaned_data = self.cleaned_data
+        #cpf = cleaned_data.get('cpf')
+        #cep = cleaned_data.get('cep')
+        
+        error_messages = {}
+        cpf = self.cpf
+        cep = self.cep
+        if not valida_cep(cep):
+             error_messages['cep'] = 'cep invalido, tente novamente.'
+        if not valida_cpf(cpf):
+
+            error_messages['cpf'] = 'cpf invalido, tente novamente.'
+            
+        if error_messages:
+            raise ValidationError(error_messages)
+        
+        super().clean(*args, **kwargs)
     
     
 
