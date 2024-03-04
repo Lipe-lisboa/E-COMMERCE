@@ -1,0 +1,29 @@
+{% extends "global/base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block conteudo %}
+<div class="row">
+
+    {% if not request.user.is_authenticated %}
+        <div class="col-lg">
+            <h4>Login</h4>
+            <p>Se vc ja fez cadastro, basta entrar com seu usuário e senha abaixo:</p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="Inputsuario">Username</label>
+                  <input type="text" name="username" class="form-control" id="Inputsuario" placeholder="Digite seu usuário">
+                  
+                </div>
+                <div class="form-group">
+                  <label for="Inputsenhausuario">Senha</label>
+                  <input type="password" name='password' class="form-control" id="senhausuario" placeholder="Digite sua senha">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-bg">Enviar</button>
+              </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock  %}

@@ -1,11 +1,13 @@
 from django.views import View
 from django.http import HttpResponse 
-from django.shortcuts import  render,redirect, get_object_or_404
+from django.shortcuts import  render,get_object_or_404, redirect
 from perfil.models import PerfilUsuario
 from django.contrib.auth.models import User
 from perfil.forms import UserForm, PerfilForm
 import copy
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
+from django.contrib import messages
+
 
 class BasePerfil(View):
     template_name = 'perfil/criar.html'
@@ -72,11 +74,10 @@ class Criar(BasePerfil):
             usuario = get_object_or_404(
                 User, username=self.request.user.username
             )
+            
             usuario.username = username
             if password:
                 usuario.set_password(password)
-                
-                
             usuario.email = email
             usuario.first_name = first_name
             usuario.last_name = last_name
@@ -91,9 +92,9 @@ class Criar(BasePerfil):
                 perfil = self.perfilform.save(commit=False)
                 perfil.user = usuario
                 perfil.save()
+                
+                
         #não logado (criar)
-        
-        
         else:
             usuario = self.userform.save(commit=False)
             usuario.set_password(password)
@@ -101,7 +102,7 @@ class Criar(BasePerfil):
             
             perfil = self.perfilform.save(commit=False)
             perfil.user = usuario
-            perfil.save()
+            perfil.save() 
         
         if password:
             autentica = authenticate(
@@ -116,20 +117,73 @@ class Criar(BasePerfil):
             
         self.request.session['carrinho'] = self.carrinho
         self.request.session.save()
-        return self.renderizar
-            
+        
+        messages.success(
+            self.request,
+            "Seu cadastro foi realizado com sucesso"
+        )
+
+        messages.success(
+            self.request,
+            "Login realizado com sucesso"
+        )
+        return redirect('perfil:criar')     
 
 class Atualizar(BasePerfil):
     def get(self, *args, **kwargs):
-        return HttpResponse("atualizar")
-    
-class Login(View):
-    template_name = 'perfil/login.html'
+        ...
+
+
+class Login(View):    
+    def setup(self, *args, **kwargs) -> None:
+        super().setup(*args, **kwargs)
+        
+        self.renderizar = render(
+            request= self.request,
+            template_name = 'perfil/login.html'
+        )
     def get(self, *args, **kwargs):
-        return HttpResponse("loguin")
+        return self.renderizar
     
+    def post(self, *args, **kwargs):
+        username = self.request.POST.get('username')
+        password = self.request.POST.get('password')
+
+        print(username, password)
+
+        if not username or not password:
+            messages.error(
+                self.request,
+                "Login invalido 09"
+            )
+
+            return redirect('perfil:login')
+
+        usuario = authenticate(self.request, username=username, password=password)
+
+        if not usuario:
+            messages.error(
+                self.request,
+                "Login invalido 98"
+            ) 
+            return redirect('perfil:login')
+
+        
+        login(self.request, user=usuario)
+
+        messages.success(
+            self.request,
+            "Usuario logado com sucesso"
+        )
+
+        return redirect('produto:carrinho')
     
 class Logout(View):
     def get(self, *args, **kwargs):
-        return HttpResponse("logout")
+        carrinho = copy.deepcopy(self.request.session.get('carrinho', {}))
+        logout(self.request)
+
+        self.request.session['carrinho'] = carrinho
+        self.request.session.save()
+        return redirect('produto:lista')
     

@@ -6,17 +6,11 @@
 
 
 <div class="row">
-
-    {% if not request.user.is_authenticated %}
-        <div class="col-lg">
-            <h1>Login</h1>
-        </div>
-    {% endif %}
-
     <div class="col-lg">
 
         {% block tituloform %}
-            <h1>Cadastro</h1>
+            <h4>Cadastro</h4>
+            <p>Caso não tenha um cadastro, preencha o formulário abaixo:</p>
         {% endblock tituloform %}
 
         <form method="POST" action="">
