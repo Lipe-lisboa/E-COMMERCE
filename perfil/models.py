@@ -70,11 +70,13 @@ class PerfilUsuario(models.Model):
         error_messages = {}
         cpf = self.cpf
         cep = self.cep
-        if not valida_cep(cep):
-             error_messages['cep'] = 'cep invalido, tente novamente.'
+
         if not valida_cpf(cpf):
 
             error_messages['cpf'] = 'cpf invalido, tente novamente.'
+            
+        if not valida_cep(cep):
+            error_messages['cep'] = 'cep invalido, tente novamente.'
             
         if error_messages:
             raise ValidationError(error_messages)

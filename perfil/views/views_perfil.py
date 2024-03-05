@@ -7,6 +7,7 @@ from perfil.forms import UserForm, PerfilForm
 import copy
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+from utils.utils import qtd_total_carrinho
 
 
 class BasePerfil(View):
@@ -62,6 +63,10 @@ class Criar(BasePerfil):
         
         
         if not self.userform.is_valid() or not self.perfilform.is_valid():
+            messages.error(
+                self.request,
+                'Existe erro no seu formulario. Verifique e envie novamente'
+            )
             return self.renderizar
         
         username = self.userform.cleaned_data.get('username')
@@ -127,12 +132,11 @@ class Criar(BasePerfil):
             self.request,
             "Login realizado com sucesso"
         )
-        return redirect('perfil:criar')     
-
-class Atualizar(BasePerfil):
-    def get(self, *args, **kwargs):
-        ...
-
+        
+        if qtd_total_carrinho(self.request.session['carrinho']) == 0:
+            return redirect('perfil:atualizar')
+        
+        return redirect('produto:carrinho')     
 
 class Login(View):    
     def setup(self, *args, **kwargs) -> None:
@@ -154,7 +158,7 @@ class Login(View):
         if not username or not password:
             messages.error(
                 self.request,
-                "Login invalido 09"
+                "Login invalido, username ou password não enviado."
             )
 
             return redirect('perfil:login')
@@ -164,7 +168,7 @@ class Login(View):
         if not usuario:
             messages.error(
                 self.request,
-                "Login invalido 98"
+                "Login invalido, esse usuário não existe."
             ) 
             return redirect('perfil:login')
 

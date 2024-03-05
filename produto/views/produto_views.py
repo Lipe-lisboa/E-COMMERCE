@@ -1,8 +1,9 @@
+from typing import Any
 from django.views.generic.list import ListView
 from django.views.generic import DetailView
 from django.views import View
-from django.http import HttpResponse
 from produto.models import Produto, Variacao
+from perfil.models import PerfilUsuario
 from django.shortcuts import redirect, get_object_or_404, reverse, render
 from django.contrib import messages
 from pprint import pprint
@@ -161,6 +162,25 @@ class Carrinho(View):
         )
     
 class ResumoDaCompra(View):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        perfil = PerfilUsuario.objects.filter(user=self.request.user).first()
+        contexto = {
+            'carrinho': self.request.session.get('carrinho', {}),
+            'usuario': self.request.user,
+            'perfil': perfil
+        }
+        self.renderizar = render(
+            request=self.request,
+            template_name='produto/resumodacompra.html',
+            context=contexto
+            
+        )
+        
+    
     def get(self, *args, **kwargs):
-        return HttpResponse("finalizar")
+        
+        if not self.request.user.is_authenticated:
+            return redirect('perfil:login')
+        return self.renderizar
     

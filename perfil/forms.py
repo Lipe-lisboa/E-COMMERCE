@@ -1,3 +1,4 @@
+from typing import Any
 from django import forms
 from . import models
 from django.contrib.auth.models import User
@@ -9,6 +10,8 @@ class PerfilForm(forms.ModelForm):
          model = models.PerfilUsuario    
          fields = '__all__' #todos
          exclude = ('user',)
+         
+
         
 
 class UserForm(forms.ModelForm):
