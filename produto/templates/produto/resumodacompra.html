@@ -30,10 +30,13 @@
             </dl>
 
             <p class="lead">Dados de endereço</p>
-            <p>Caso precise editar, <a href="#">clique aqui</a></p>
+            <p>Caso precise editar, <a href="{% url "perfil:criar" %}">clique aqui</a></p>
             <dl class="row">
                 <dt class="col-lg-2">Endereço:</dt>
                 <dd class="col-lg-4">{{perfil.endereco}}</dd>
+
+                <dt class="col-lg-2">Bairro:</dt>
+                <dd class="col-lg-4">{{perfil.bairro}}</dd>
 
                 <dt class="col-lg-2">Número:</dt>
                 <dd class="col-lg-4">{{perfil.numero}}</dd>

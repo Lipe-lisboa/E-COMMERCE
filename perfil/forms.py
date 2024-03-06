@@ -10,9 +10,7 @@ class PerfilForm(forms.ModelForm):
          model = models.PerfilUsuario    
          fields = '__all__' #todos
          exclude = ('user',)
-         
 
-        
 
 class UserForm(forms.ModelForm):
     

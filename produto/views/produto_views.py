@@ -6,7 +6,7 @@ from produto.models import Produto, Variacao
 from perfil.models import PerfilUsuario
 from django.shortcuts import redirect, get_object_or_404, reverse, render
 from django.contrib import messages
-from pprint import pprint
+from utils.utils import qtd_total_carrinho
 
 class ListaProdutos(ListView):
     model = Produto
@@ -164,11 +164,15 @@ class Carrinho(View):
 class ResumoDaCompra(View):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        perfil = PerfilUsuario.objects.filter(user=self.request.user).first()
+        
+        self.usuario = self.request.user
+        self.perfil = PerfilUsuario.objects.filter(user=self.request.user)
+        self.carrinho =  self.request.session.get('carrinho', {})
+        
         contexto = {
-            'carrinho': self.request.session.get('carrinho', {}),
-            'usuario': self.request.user,
-            'perfil': perfil
+            'carrinho' : self.carrinho,
+            'usuario': self.usuario ,
+            'perfil':self.perfil.first()
         }
         self.renderizar = render(
             request=self.request,
@@ -182,5 +186,20 @@ class ResumoDaCompra(View):
         
         if not self.request.user.is_authenticated:
             return redirect('perfil:login')
+        
+        if not self.perfil.exists():
+            messages.error(
+                self.request,
+                'Usuário sem perfil'
+            )
+            return redirect('perfil:criar')
+            
+        if qtd_total_carrinho(self.carrinho) == 0:
+            messages.error(
+                self.request,
+                'Carrinho vazio'
+            )
+            return redirect('produto:lista')
+        
         return self.renderizar
     
