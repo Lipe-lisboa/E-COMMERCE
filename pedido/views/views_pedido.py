@@ -1,18 +1,42 @@
 from typing import Any
-from django.views.generic.list import ListView
+from django.views.generic import DetailView
 from django.views import View
-from django.http import HttpRequest, HttpResponse
+from django.http import  HttpResponse
 
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404, render, reverse
 from django.contrib import messages
 from utils.utils import qtd_total_carrinho, preco_total
 from produto.models import Variacao
 from pedido.models import Pedido, ItemPedido
 
 
-class PagarPedido(View):
-    template_name = 'pedido/pagar.html'
+class DispatchLoginRequired():
     
+    def dispatch(self, *args, **kwargs):
+        
+        if not self.request.user.is_authenticated:
+            return redirect('perfil:login')
+        return super().dispatch( *args, **kwargs)
+    
+
+class PagarPedido(DispatchLoginRequired,DetailView):
+    template_name = 'pedido/pagar.html'
+    model = Pedido
+    pk_url_kwarg = 'id'
+    context_object_name = 'pedido'
+    
+    def get_queryset(self, *args, **kwargs):
+        queryset =  super().get_queryset(*args, **kwargs)
+        queryset = queryset.filter(
+            usuario=self.request.user
+        )
+        
+        return queryset
+    
+    
+    
+    
+class SalvarPedido(View):
     
     def get(self, *args, **kwargs):
         self.carrinho = self.request.session.get('carrinho', {})
@@ -94,11 +118,15 @@ class PagarPedido(View):
         )
         
         del self.request.session['carrinho']
-        return redirect('pedido:lista')
-    
-class SalvarPedido(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse("fechar")
+        return redirect(
+            reverse(
+                'pedido:pagar',
+                kwargs={
+                    'id':pedido.id    
+                }
+                
+            )
+        )
 
 class ListaPedido(View):
     def get(self, *args, **kwargs):

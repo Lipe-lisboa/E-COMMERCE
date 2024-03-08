@@ -194,7 +194,7 @@ class ResumoDaCompra(View):
             )
             return redirect('perfil:criar')
             
-        if qtd_total_carrinho(self.carrinho) == 0:
+        if not self.carrinho:
             messages.error(
                 self.request,
                 'Carrinho vazio'
