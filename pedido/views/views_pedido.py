@@ -1,5 +1,5 @@
 from typing import Any
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.views import View
 from django.http import  HttpResponse
 
@@ -10,7 +10,7 @@ from produto.models import Variacao
 from pedido.models import Pedido, ItemPedido
 
 
-class DispatchLoginRequired():
+class DispatchLoginRequiredMixin(View):
     
     def dispatch(self, *args, **kwargs):
         
@@ -18,23 +18,20 @@ class DispatchLoginRequired():
             return redirect('perfil:login')
         return super().dispatch( *args, **kwargs)
     
+    def get_queryset(self, *args, **kwargs):
+        qs =  super().get_queryset(*args, **kwargs)
+        qs = qs.filter(
+            usuario=self.request.user
+        )
+        
+        return qs    
 
-class PagarPedido(DispatchLoginRequired,DetailView):
+class PagarPedido(DispatchLoginRequiredMixin,DetailView):
     template_name = 'pedido/pagar.html'
     model = Pedido
     pk_url_kwarg = 'id'
     context_object_name = 'pedido'
-    
-    def get_queryset(self, *args, **kwargs):
-        queryset =  super().get_queryset(*args, **kwargs)
-        queryset = queryset.filter(
-            usuario=self.request.user
-        )
-        
-        return queryset
-    
-    
-    
+
     
 class SalvarPedido(View):
     
@@ -128,10 +125,16 @@ class SalvarPedido(View):
             )
         )
 
-class ListaPedido(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse("lista")
-ListaPedido    
-class DetalhePedido(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse("detalhe pedido")
+class ListaPedido(DispatchLoginRequiredMixin ,ListView):
+    model = Pedido
+    context_object_name = 'pedidos'
+    template_name = 'pedido/lista_pedidos.html'
+    paginate_by = 10
+    ordering = '-id'
+ 
+
+class DetalhePedido(DispatchLoginRequiredMixin, DetailView):
+    model = Pedido
+    context_object_name = 'pedido'
+    template_name = 'pedido/detalhe.html'
+    pk_url_kwarg = 'id'
