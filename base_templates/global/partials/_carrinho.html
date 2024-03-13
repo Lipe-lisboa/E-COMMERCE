@@ -38,10 +38,10 @@
                 
                 </td>
 
-                {% if preco_quantitativo_promocional %}
-                    <td> R% {{produto.preco_quantitativo_promocional}}</td>
+                {% if produto.preco_quantitativo_promocional %}
+                    <td>{{produto.preco_quantitativo_promocional | formata_preco}}</td>
                 {% else %}
-                    <td>R$ {{produto.preco_quantitativo}}</td>
+                    <td>{{produto.preco_quantitativo | formata_preco}}</td>
                 {% endif %}
                 
             </tr>

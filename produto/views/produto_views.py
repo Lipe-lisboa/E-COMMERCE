@@ -15,6 +15,7 @@ class ListaProdutos(ListView):
     paginate_by = 3
     ordering = '-id'
     
+    
 class DetalheProduto(DetailView):
     model =  Produto
     template_name = 'produto/detalhe.html'

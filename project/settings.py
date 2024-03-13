@@ -42,8 +42,6 @@ INSTALLED_APPS = [
     'perfil',
     'produto',
     
-    
-    "debug_toolbar",
     'crispy_forms',
     'crispy_bootstrap4', # pip install crispy_bootstrap4
 ]
@@ -58,10 +56,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    
-    
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -168,6 +162,3 @@ SESSION_SAVE_EVERY_REQUEST = False
 # Serializer - Padrão JSON
 # SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-INTERNAL_IPS = [
-    '127.0.0.1'
-]
