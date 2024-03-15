@@ -6,11 +6,44 @@ from django.core.exceptions import ValidationError
 from utils.validate import valida_cpf, valida_cep
 
 class PerfilForm(forms.ModelForm):
+    
+    def __init__(self, usuario=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.usuario = usuario
+        
     class Meta:
          model = models.PerfilUsuario    
          fields = '__all__' #todos
          exclude = ('user',)
 
+    def clean(self, *args, **kwargs):
+        cleaned_data = self.cleaned_data
+        cpf = cleaned_data.get('cpf')
+        perfi_do_cpf = models.PerfilUsuario.objects.filter(cpf=cpf)
+        perfil_usuario = models.PerfilUsuario.objects.filter(user=self.usuario).first()
+        usuario = self.usuario
+        
+        if usuario:
+            if perfi_do_cpf.exists()  and perfil_usuario.id != perfi_do_cpf.first().id:
+                self.add_error(
+                    'cpf',
+                    ValidationError(
+                        'Esse cpf ja existe'
+                    )
+                )
+        else:
+            if perfi_do_cpf.exists():
+                self.add_error(
+                    'cpf',
+                    ValidationError(
+                        'Esse cpf ja existe'
+                    )
+                )
+                
+        return super().clean(*args, **kwargs)
+            
+            
 
 class UserForm(forms.ModelForm):
     

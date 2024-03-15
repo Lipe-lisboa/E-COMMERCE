@@ -33,6 +33,7 @@ class BasePerfil(View):
                 'perfilform': PerfilForm(
                     data=self.request.POST or None,
                     instance=self.perfil,
+                    usuario=self.request.user,
                 ),
             }
             

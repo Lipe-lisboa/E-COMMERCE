@@ -72,7 +72,6 @@ class PerfilUsuario(models.Model):
         cep = self.cep
 
         if not valida_cpf(cpf):
-
             error_messages['cpf'] = 'cpf invalido, tente novamente.'
             
         if not valida_cep(cep):
