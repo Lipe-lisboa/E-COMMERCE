@@ -1,4 +1,5 @@
 from typing import Any
+from django.http import HttpRequest, HttpResponse
 from django.views.generic.list import ListView
 from django.views.generic import DetailView
 from django.views import View
@@ -7,15 +8,40 @@ from perfil.models import PerfilUsuario
 from django.shortcuts import redirect, get_object_or_404, reverse, render
 from django.contrib import messages
 from utils.utils import qtd_total_carrinho
+from django.db.models import Q
 
 class ListaProdutos(ListView):
     model = Produto
     template_name = 'produto/lista.html'
     context_object_name = 'produtos'
-    paginate_by = 3
+    paginate_by =1
     ordering = '-id'
     
+
+class Busca(ListaProdutos):
     
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._valor_busca = ''
+        
+    def get_queryset(self):
+        qs = super().get_queryset()
+        self._valor_busca = self.request.GET.get('termo', '').strip() or self.request.session['termo']
+        
+        if not self._valor_busca:
+            return qs
+        
+        self.request.session['termo'] = self._valor_busca 
+        
+        qs = qs.filter(
+        Q(name__icontains=self._valor_busca) |
+        Q(descricao_curta__icontains=self._valor_busca) |
+        Q(descricao_longa__icontains=self._valor_busca)     
+        )
+        
+        
+        self.request.session.save()
+        return qs
 class DetalheProduto(DetailView):
     model =  Produto
     template_name = 'produto/detalhe.html'
